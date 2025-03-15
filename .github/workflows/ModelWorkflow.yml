@@ -1,0 +1,5 @@
+name: Clf Model Workflow
+on: 
+  pull_request:
+    branches:
+      - dev
