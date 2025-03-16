@@ -24,9 +24,10 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-
-      - name: Run Tests
-        run: pytest tests/
+      - name: Set PYTHONPATH and Run Tests
+        run: |
+          export PYTHONPATH=notebook  # Set PYTHONPATH to the src directory
+          pytest tests  # Run tests located in the tests directory
 
       # List the databricks repos within the workspace whose credentials are stored in the Github Environment "my-environment"
       # - name: List databricks repos
