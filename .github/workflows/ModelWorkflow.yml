@@ -11,21 +11,28 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Run a simple test
-        run: |
-          echo "Hello World"
-          echo "This is a test job running on Github Actions."
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11.10"
 
       # Install databricks CLI as per https://docs.databricks.com/dev-tools/cli/databricks-cli.html
       - name: Install databricks CLI
         run: |
          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
-      # List the databricks repos within the workspace whose credentials are stored in the Github Environment "my-environment"
-      - name: List databricks repos
-        env:
-          # Note the host is an "environment variable" in the Github Environment while the token is a "secret" in the Github Environment
-          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      - name: Install dependencies
         run: |
-          databricks repos list
+          pip install -r requirements.txt
+
+      - name: Run Tests
+        run: pytest tests/
+
+      # List the databricks repos within the workspace whose credentials are stored in the Github Environment "my-environment"
+      # - name: List databricks repos
+      #   env:
+      #     # Note the host is an "environment variable" in the Github Environment while the token is a "secret" in the Github Environment
+      #     DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      #     DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      #   run: |
+      #     databricks repos list

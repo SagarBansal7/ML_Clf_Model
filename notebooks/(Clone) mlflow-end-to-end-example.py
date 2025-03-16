@@ -24,161 +24,6 @@
 
 # COMMAND ----------
 
-!mlflow --version
-
-# COMMAND ----------
-
-# !pip install mlflow
-# dbutils.library.restartPython()
-
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import numpy as np
-import mlflow
-import mlflow.pyfunc
-import mlflow.sklearn
-import sklearn
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_auc_score
-from mlflow.models.signature import infer_signature
-from mlflow.utils.environment import _mlflow_conda_env
-import cloudpickle
-import time
-
-# 1. Data Processing Class
-class WineDataProcessor:
-    def __init__(self):
-        self.data = None
-
-    def load_data(self):
-        """Loads red and white wine datasets and preprocesses them."""
-        white_wine = pd.read_csv("/databricks-datasets/wine-quality/winequality-white.csv", sep=";")
-        red_wine = pd.read_csv("/databricks-datasets/wine-quality/winequality-red.csv", sep=";")
-
-        red_wine['is_red'] = 1
-        white_wine['is_red'] = 0
-        data = pd.concat([red_wine, white_wine], axis=0)
-
-        # Clean column names
-        data.rename(columns=lambda x: x.replace(' ', '_'), inplace=True)
-
-        # Convert quality into a binary classification (high quality or not)
-        data['quality'] = (data.quality >= 7).astype(int)
-
-        self.data = data
-        return self.data
-
-    def split_data(self, test_size=0.2, val_size=0.2):
-        """Splits the dataset into training, validation, and test sets."""
-        X = self.data.drop(["quality"], axis=1)
-        y = self.data.quality
-
-        X_train, X_rem, y_train, y_rem = train_test_split(X, y, train_size=1-test_size-val_size, random_state=123)
-        X_val, X_test, y_val, y_test = train_test_split(X_rem, y_rem, test_size=val_size/(test_size+val_size), random_state=123)
-
-        return X_train, X_val, X_test, y_train, y_val, y_test
-
-# 2. Model Wrapper Class
-class SklearnModelWrapper(mlflow.pyfunc.PythonModel):
-    def __init__(self, model):
-        self.model = model
-
-    def predict(self, context, model_input):
-        return self.model.predict_proba(model_input)[:,1]
-
-# 3. Machine Learning Model Class
-class WineQualityModel:
-    def __init__(self, model=RandomForestClassifier(n_estimators=10, random_state=123)):
-        self.model = model
-
-    def train(self, X_train, y_train):
-        """Trains the model."""
-        self.model.fit(X_train, y_train)
-
-    def evaluate(self, X_test, y_test):
-        """Evaluates the model using ROC AUC score."""
-        predictions = self.model.predict_proba(X_test)[:,1]
-        auc_score = roc_auc_score(y_test, predictions)
-        return auc_score
-
-    def log_model(self, X_train):
-        """Logs the model using MLflow."""
-        wrappedModel = SklearnModelWrapper(self.model)
-        signature = infer_signature(X_train, wrappedModel.predict(None, X_train))
-
-        conda_env = _mlflow_conda_env(
-            additional_conda_deps=None,
-            additional_pip_deps=["cloudpickle=={}".format(cloudpickle.__version__), "scikit-learn=={}".format(sklearn.__version__)],
-            additional_conda_channels=None,
-        )
-
-        mlflow.pyfunc.log_model("random_forest_model", python_model=wrappedModel, conda_env=conda_env, signature=signature)
-
-# 4. MLflow Experiment Class
-class MLflowExperiment:
-    def __init__(self, model_name="wine_quality"):
-        self.model_name = model_name
-
-    def run_experiment(self, model, X_train, X_test, y_train, y_test):
-        """Runs an MLflow experiment to log parameters and metrics."""
-        with mlflow.start_run(run_name='untuned_random_forest'):
-            model.train(X_train, y_train)
-            auc_score = model.evaluate(X_test, y_test)
-
-            mlflow.log_param('n_estimators', model.model.n_estimators)
-            mlflow.log_metric('auc', auc_score)
-            model.log_model(X_train)
-
-            return mlflow.search_runs(filter_string='tags.mlflow.runName = "untuned_random_forest"').iloc[0].run_id
-
-    def register_model(self, run_id):
-        """Registers the trained model in MLflow."""
-        model_version = mlflow.register_model(f"runs:/{run_id}/random_forest_model", self.model_name)
-        client = mlflow.MlflowClient()
-        client.set_registered_model_alias(self.model_name, "production", version=model_version.version)
-        time.sleep(15)  # Wait for registration to complete
-        return model_version
-
-# 5. Feature Importance Class
-class FeatureImportance:
-    @staticmethod
-    def get_importance(model, X_train):
-        """Retrieves and sorts feature importance values."""
-        feature_importances = pd.DataFrame(model.model.feature_importances_, index=X_train.columns, columns=['importance'])
-        return feature_importances.sort_values('importance', ascending=False)
-
-# Main Script
-if __name__ == "__main__":
-    # Data Processing
-    processor = WineDataProcessor()
-    data = processor.load_data()
-    X_train, X_val, X_test, y_train, y_val, y_test = processor.split_data()
-
-    # Model Training
-    wine_model = WineQualityModel()
-    experiment = MLflowExperiment()
-
-    # Run experiment & register model
-    run_id = experiment.run_experiment(wine_model, X_train, X_test, y_train, y_test)
-    model_version = experiment.register_model(run_id)
-    
-
-    # Feature Importance
-    feature_importance = FeatureImportance.get_importance(wine_model, X_train)
-    print(feature_importance)
-
-
-# COMMAND ----------
-
-white_wine = pd.read_csv("/databricks-datasets/wine-quality/winequality-white.csv", sep=";")
-white_wine.columns
-
-# COMMAND ----------
-
-!pip install mlflow
-dbutils.library.restartPython()
 import pandas as pd
 
 white_wine = pd.read_csv("/databricks-datasets/wine-quality/winequality-white.csv", sep=";")
@@ -200,6 +45,48 @@ sns.displot(data.quality, kde=False)
 high_quality = (data.quality >= 7).astype(int)
 data.quality = high_quality
 
+# COMMAND ----------
+
+# MAGIC %md Merge the two DataFrames into a single dataset, with a new binary feature "is_red" that indicates whether the wine is red or white.
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+# MAGIC %md ## Visualize data
+# MAGIC
+# MAGIC Before training a model, explore the dataset using Seaborn and Matplotlib.
+
+# COMMAND ----------
+
+# MAGIC %md Plot a histogram of the dependent variable, quality.
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+# MAGIC %md Looks like quality scores are normally distributed between 3 and 9. 
+# MAGIC
+# MAGIC Define a wine as high quality if it has quality >= 7.
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+# MAGIC %md Box plots are useful for identifying correlations between features and a binary label. Create box plots for each feature to compare high-quality and low-quality wines. Significant differences in the box plots indicate good predictors of quality.
+
+# COMMAND ----------
+
 import matplotlib.pyplot as plt
 
 dims = (3, 4)
@@ -215,7 +102,36 @@ for col in data.columns:
     axis_i += 1
     axis_j = 0
 
+# COMMAND ----------
+
+# MAGIC %md In the above box plots, a few variables stand out as good univariate predictors of quality. 
+# MAGIC
+# MAGIC - In the alcohol box plot, the median alcohol content of high quality wines is greater than even the 75th quantile of low quality wines. High alcohol content is correlated with quality.
+# MAGIC - In the density box plot, low quality wines have a greater density than high quality wines. Density is inversely correlated with quality.
+
+# COMMAND ----------
+
+# MAGIC %md ## Preprocess data
+# MAGIC Before training a model, check for missing values and split the data into training and validation sets.
+
+# COMMAND ----------
+
 data.isna().any()
+
+# COMMAND ----------
+
+# MAGIC %md There are no missing values.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Prepare the dataset to train a baseline model
+# MAGIC Split the input data into 3 sets:
+# MAGIC - Train (60% of the dataset used to train the model)
+# MAGIC - Validation (20% of the dataset used to tune the hyperparameters)
+# MAGIC - Test (20% of the dataset used to report the true performance of the model on an unseen dataset)
+
+# COMMAND ----------
 
 from sklearn.model_selection import train_test_split
 
@@ -227,6 +143,23 @@ X_train, X_rem, y_train, y_rem = train_test_split(X, y, train_size=0.6, random_s
 
 # Split the remaining data equally into validation and test
 X_val, X_test, y_val, y_test = train_test_split(X_rem, y_rem, test_size=0.5, random_state=123)
+
+# COMMAND ----------
+
+# MAGIC %md ## Train a baseline model
+# MAGIC This task seems well suited to a random forest classifier, since the output is binary and there may be interactions between multiple variables.
+# MAGIC
+# MAGIC Build a simple classifier using scikit-learn and use MLflow to keep track of the model's accuracy, and to save the model for later use.
+
+# COMMAND ----------
+
+!pip install mlflow
+
+# COMMAND ----------
+
+dbutils.library.restartPython()
+
+# COMMAND ----------
 
 import mlflow
 import mlflow.pyfunc
@@ -279,99 +212,14 @@ with mlflow.start_run(run_name='untuned_random_forest'):
     )
   mlflow.pyfunc.log_model("random_forest_model", python_model=wrappedModel, conda_env=conda_env, signature=signature)
 
-feature_importances = pd.DataFrame(model.feature_importances_, index=X_train.columns.tolist(), columns=['importance'])
-feature_importances.sort_values('importance', ascending=False)
-
-run_id = mlflow.search_runs(filter_string='tags.mlflow.runName = "untuned_random_forest"').iloc[0].run_id
-
-# If you see the error "PERMISSION_DENIED: User does not have any permission level assigned to the registered model", 
-# the cause may be that a model already exists with the name "wine_quality". Try using a different name.
-model_name = "wine_quality"
-model_version = mlflow.register_model(f"runs:/{run_id}/random_forest_model", model_name)
-
-# Registering the model takes a few seconds, so add a small delay
-time.sleep(15)
-
-# COMMAND ----------
-
-# MAGIC %md Merge the two DataFrames into a single dataset, with a new binary feature "is_red" that indicates whether the wine is red or white.
-
-# COMMAND ----------
-
-# MAGIC %md Plot a histogram of the dependent variable, quality.
-
-# COMMAND ----------
-
-# MAGIC %md Looks like quality scores are normally distributed between 3 and 9. 
-# MAGIC
-# MAGIC Define a wine as high quality if it has quality >= 7.
-
-# COMMAND ----------
-
-# MAGIC %md Box plots are useful for identifying correlations between features and a binary label. Create box plots for each feature to compare high-quality and low-quality wines. Significant differences in the box plots indicate good predictors of quality.
-
-# COMMAND ----------
-
-# MAGIC %md In the above box plots, a few variables stand out as good univariate predictors of quality. 
-# MAGIC
-# MAGIC - In the alcohol box plot, the median alcohol content of high quality wines is greater than even the 75th quantile of low quality wines. High alcohol content is correlated with quality.
-# MAGIC - In the density box plot, low quality wines have a greater density than high quality wines. Density is inversely correlated with quality.
-
-# COMMAND ----------
-
-# MAGIC %md ## Preprocess data
-# MAGIC Before training a model, check for missing values and split the data into training and validation sets.
-
-# COMMAND ----------
-
-import mlflow
-temp = mlflow.search_registered_models()
-for i in temp:
-  print(ii.name)
-
-# COMMAND ----------
-
-# MAGIC %md There are no missing values.
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Prepare the dataset to train a baseline model
-# MAGIC Split the input data into 3 sets:
-# MAGIC - Train (60% of the dataset used to train the model)
-# MAGIC - Validation (20% of the dataset used to tune the hyperparameters)
-# MAGIC - Test (20% of the dataset used to report the true performance of the model on an unseen dataset)
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-# MAGIC %md ## Train a baseline model
-# MAGIC This task seems well suited to a random forest classifier, since the output is binary and there may be interactions between multiple variables.
-# MAGIC
-# MAGIC Build a simple classifier using scikit-learn and use MLflow to keep track of the model's accuracy, and to save the model for later use.
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-
-
 # COMMAND ----------
 
 # MAGIC %md Review the learned feature importances output by the model. As illustrated by the previous boxplots, alcohol and density are important in predicting quality.
 
 # COMMAND ----------
 
-
+feature_importances = pd.DataFrame(model.feature_importances_, index=X_train.columns.tolist(), columns=['importance'])
+feature_importances.sort_values('importance', ascending=False)
 
 # COMMAND ----------
 
@@ -391,11 +239,17 @@ for i in temp:
 
 # COMMAND ----------
 
-
+run_id = mlflow.search_runs(filter_string='tags.mlflow.runName = "untuned_random_forest"').iloc[0].run_id
 
 # COMMAND ----------
 
+# If you see the error "PERMISSION_DENIED: User does not have any permission level assigned to the registered model", 
+# the cause may be that a model already exists with the name "wine_quality". Try using a different name.
+model_name = "wine_quality"
+model_version = mlflow.register_model(f"runs:/{run_id}/random_forest_model", model_name)
 
+# Registering the model takes a few seconds, so add a small delay
+time.sleep(15)
 
 # COMMAND ----------
 
