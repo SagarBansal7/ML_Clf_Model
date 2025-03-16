@@ -1,20 +1,17 @@
 name: Clf Model Workflow
 on: 
-  pull_request:
+  push:
     branches:
       - dev
-
-name: databricks-cicd
-...
 jobs:
-  main:
+  test:
     runs-on: ubuntu-latest
-    ...
+
     steps:
-      - name: Check out repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Install databricks CLI as per https://docs.databricks.com/dev-tools/cli/databricks-cli.html
-      - name: Install databricks CLI
+      - name: Run a simple test
         run: |
-         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+          echo "Hello World"
+          echo "This is a test job running on Github Actions."
