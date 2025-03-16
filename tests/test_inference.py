@@ -1,7 +1,9 @@
 # !pip install pytest
 #!pip install mlflow
 import sys
-sys.path.insert(0, '/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks')
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), '../notebooks'))) 
+#'/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks')
 
 import pytest
 import numpy as np
