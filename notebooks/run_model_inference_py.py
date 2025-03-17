@@ -54,21 +54,12 @@ class WineDataProcessor:
 
     def load_data(self):
         """Loads red and white wine datasets and preprocesses them."""
-        white_wine = pd.read_csv("/databricks-datasets/wine-quality/winequality-white.csv", sep=";")
-        red_wine = pd.read_csv("/databricks-datasets/wine-quality/winequality-red.csv", sep=";")
-
-        red_wine['is_red'] = 1
-        white_wine['is_red'] = 0
-        data = pd.concat([red_wine, white_wine], axis=0)
-        data = data.sample(frac=1).reset_index(drop=True)
-
+        data = spark.read.table("workspace.ml_clf_model_predictions.wine_quality_inference_data").toPandas()
+        
         # Check for missing columns
         missing_cols = [col for col in self.feature_columns if col not in data.columns]
         if missing_cols:
             raise ValueError(f"Missing required features: {missing_cols}")
-
-        # Clean column names
-        data.rename(columns=lambda x: x.replace(' ', '_'), inplace=True)
 
         self.data = data
         return self.data
@@ -124,8 +115,8 @@ if __name__ == "__main__":
     model_loader.load_model()
 
     # Define feature columns (must match those used during training)
-    FEATURE_COLUMNS = ['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar',
-       'chlorides', 'free sulfur dioxide', 'total sulfur dioxide', 'density',
+    FEATURE_COLUMNS = ['fixed_acidity', 'volatile_acidity', 'citric_acid', 'residual_sugar',
+       'chlorides', 'free_sulfur_dioxide', 'total_sulfur_dioxide', 'density',
        'pH', 'sulphates', 'alcohol', 'is_red']
 
     # Initialize preprocessor
