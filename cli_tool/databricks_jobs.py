@@ -53,7 +53,7 @@ class DatabricksJobManager:
         """Creates the training job (Runs every 30 days)."""
         self.create_job(
             job_name="Train Classification Model",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model.ipynb",
+            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_py.py",
             schedule="0 0 1 */1 *"  # Runs every 30 days
         )
 
@@ -61,6 +61,6 @@ class DatabricksJobManager:
         """Creates the inference job (Runs daily)."""
         self.create_job(
             job_name="Run Inference",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/run_inference.ipynb",
+            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/run_model_inference_py.py",
             schedule="0 0 * * *"  # Runs daily
         )

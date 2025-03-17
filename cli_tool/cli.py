@@ -1,18 +1,18 @@
 import click
 import os
-from cli_tool.databricks_jobs import DatabricksJobManager
+from databricks_jobs import DatabricksJobManager
 #dbutils.import_notebook("cli_tool")
 
 # Load Databricks credentials from environment variables
 DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
 DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
 
-@click.group()
+@click.group(context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
 def cli():
     """Databricks CLI Tool for Deploying Jobs."""
     pass
 
-@click.command()
+@click.command(context_settings=dict(ignore_unknown_options=True))
 def deploy():
     """Deploys the Databricks jobs."""
     if not DATABRICKS_HOST or not DATABRICKS_TOKEN:
