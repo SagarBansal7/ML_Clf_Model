@@ -22,7 +22,7 @@ jobs:
          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
       - name: Set up Databricks CLI
         run: |
-        databricks configure --host https://dbc-d953ac30-db10.cloud.databricks.com/ --token ${{ secrets.DATABRICKS_TOKEN}}
+          databricks configure --host https://dbc-d953ac30-db10.cloud.databricks.com/ --token ${{ secrets.DATABRICKS_TOKEN}}
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
