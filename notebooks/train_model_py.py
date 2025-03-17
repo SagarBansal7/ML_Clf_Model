@@ -18,7 +18,6 @@ import time
 from pyspark.sql.session import SparkSession
 spark = SparkSession.builder.getOrCreate()
 
-
 # 1. Data Processing Class
 class WineDataProcessor:
     def __init__(self):
@@ -26,8 +25,8 @@ class WineDataProcessor:
 
     def load_data(self):
         """Loads wine datasets and preprocesses them."""
-        white_wine = spark.read.table("workspace.ml_clf_model_predictions.white_wine_training_data").toPandas()
-        red_wine = spark.read.table("workspace.ml_clf_model_predictions.red_wine_training_data").toPandas()
+        white_wine = spark.read.table("ml_clf_model_predictions.white_wine_training_data").toPandas()
+        red_wine = spark.read.table("ml_clf_model_predictions.red_wine_training_data").toPandas()
 
         red_wine['is_red'] = 1
         white_wine['is_red'] = 0
