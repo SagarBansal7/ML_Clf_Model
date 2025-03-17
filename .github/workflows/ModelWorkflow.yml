@@ -26,8 +26,8 @@ jobs:
       - name: Set PYTHONPATH and Run Notebooks
         run: |
           export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
-          python train_model_py.py  # Run tests located in the tests directory
-          python run_model_inference_py.py  # Run tests located in the tests directory
+          python notebooks/train_model_py.py  # Run tests located in the tests directory
+          python notebooks/run_model_inference_py.py  # Run tests located in the tests directory
       # - name: Set PYTHONPATH and Run Tests
       #   run: |
       #     export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
