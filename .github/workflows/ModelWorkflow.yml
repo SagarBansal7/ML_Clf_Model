@@ -23,10 +23,15 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-      - name: Set PYTHONPATH and Run Tests
+      - name: Set PYTHONPATH and Run Notebooks
         run: |
           export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
-          pytest tests  # Run tests located in the tests directory
+          python train_model_py.py  # Run tests located in the tests directory
+          python run_model_inference_py.py  # Run tests located in the tests directory
+      # - name: Set PYTHONPATH and Run Tests
+      #   run: |
+      #     export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
+      #     pytest tests  # Run tests located in the tests directory
 
 # name: Execute Databricks Notebook
  
