@@ -20,7 +20,9 @@ spark = SparkSession.builder.getOrCreate()
 
 # Set the MLflow model registry URI
 #spark.conf.set("spark.mlflow.modelRegistryUri", "databricks")
+mlflow.set_registry_uri("databricks-uc")
 mlflow.set_tracking_uri("databricks")
+mlflow.set_experiment("/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_py.py") 
 
 # 1. Model Loader Class
 class ModelLoader:

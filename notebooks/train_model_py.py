@@ -18,6 +18,11 @@ import time
 from pyspark.sql.session import SparkSession
 spark = SparkSession.builder.getOrCreate()
 
+#mlflow uri setup
+mlflow.set_registry_uri("databricks-uc")
+mlflow.set_tracking_uri("databricks")
+mlflow.set_experiment("/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_py.py") 
+
 # 1. Data Processing Class
 class WineDataProcessor:
     def __init__(self):
