@@ -21,10 +21,6 @@ jobs:
         run:
           echo "${{ secrets.DATABRICKS_HOST }}"
           echo "${{ secrets.DATABRICKS_HOST }}"
-      - name: Test Host and Token2
-        run:
-          echo "${{ DB_Environment.DATABRICKS_HOST }}"
-          echo "${{ DB_Environment.DATABRICKS_HOST }}"
       # - name: List databricks repos
       #   env:
       #     # Note the host is an "environment variable" in the Github Environment
