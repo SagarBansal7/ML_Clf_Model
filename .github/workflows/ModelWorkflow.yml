@@ -17,15 +17,25 @@ jobs:
           python-version: "3.11.10"
       # List the databricks repos within the workspace whose credentials
       # are stored in the Github Environment "my-environment"
-      - name: List databricks repos
-        env:
-          # Note the host is an "environment variable" in the Github Environment
-          # while the token is a "secret" in the Github Environment
-          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-        run: |
-          databricks repos list
-      # Install databricks CLI as per https://docs.databricks.com/dev-tools/cli/databricks-cli.html
+      - name: Test Host and Token
+        run:
+          echo "${{ secrets.DATABRICKS_HOST }}"
+          echo "${{ secrets.DATABRICKS_HOST }}"
+      - name: Test Host and Token2
+        run:
+          echo "${{ DB_Environment.DATABRICKS_HOST }}"
+          echo "${{ DB_Environment.DATABRICKS_HOST }}"
+      # - name: List databricks repos
+      #   env:
+      #     # Note the host is an "environment variable" in the Github Environment
+      #     # while the token is a "secret" in the Github Environment
+      #     DATABRICKS_HOST: ${{ DB_Environment.DATABRICKS_HOST }}
+      #     DATABRICKS_TOKEN: ${{ DB_Environment.DATABRICKS_TOKEN }}
+      #     echo "${{ DB_Environment.DATABRICKS_HOST }}"
+      #     echo "${{ DB_Environment.DATABRICKS_TOKEN }}"
+      #   run: |
+      #     databricks repos list
+      # # Install databricks CLI as per https://docs.databricks.com/dev-tools/cli/databricks-cli.html
       - name: Install databricks CLI
         run: |
          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
@@ -78,7 +88,7 @@ jobs:
 #               "num_workers": 2
 #             },
 #             "notebook_task": {
-#               "notebook_path": "/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/tests/test_training.py"
+#               "notebook_path": "/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_ipynb.py"
 #             }
 #           }'
 
