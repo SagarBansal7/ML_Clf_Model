@@ -15,29 +15,13 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11.10"
-      # List the databricks repos within the workspace whose credentials
-      # are stored in the Github Environment "my-environment"
-      - name: Test Host and Token
-        run:
-          echo "${{ secrets.DATABRICKS_HOST }}"
-          echo "${{ secrets.DATABRICKS_HOST }}"
-      # - name: List databricks repos
-      #   env:
-      #     # Note the host is an "environment variable" in the Github Environment
-      #     # while the token is a "secret" in the Github Environment
-      #     DATABRICKS_HOST: ${{ DB_Environment.DATABRICKS_HOST }}
-      #     DATABRICKS_TOKEN: ${{ DB_Environment.DATABRICKS_TOKEN }}
-      #     echo "${{ DB_Environment.DATABRICKS_HOST }}"
-      #     echo "${{ DB_Environment.DATABRICKS_TOKEN }}"
-      #   run: |
-      #     databricks repos list
-      # # Install databricks CLI as per https://docs.databricks.com/dev-tools/cli/databricks-cli.html
+      
       - name: Install databricks CLI
         run: |
          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
-      # - name: Set up Databricks CLI
-      #   run: |
-      #     databricks configure --host https://dbc-d953ac30-db10.cloud.databricks.com/ --token ${{ secrets.DATABRICKS_TOKEN }}
+      - name: Set up Databricks CLI
+        run: |
+          databricks configure --host ${{ secrets.DATABRICKS_HOST }} --token ${{ secrets.DATABRICKS_TOKEN }}
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
