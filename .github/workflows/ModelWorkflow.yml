@@ -1,81 +1,78 @@
-name: Clf Model Workflow
-on: 
-  push:
-    branches:
-      - dev
-jobs:
-  test:
-    runs-on: ubuntu-latest
+# name: Clf Model Workflow
+# on: 
+#   push:
+#     branches:
+#       - dev
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11.10"
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: "3.11.10"
       
-      - name: Install databricks CLI
-        run: |
-         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
-      - name: Set up Databricks CLI
-        env: 
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-        run: |
-          databricks repos list
-        #   databricks configure --host ${{ secrets.DATABRICKS_HOST }} --token ${{ secrets.DATABRICKS_TOKEN }}
-        # run: |
-        #   echo "${{ secrets.DATABRICKS_HOST }}"
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-      - name: Set PYTHONPATH and Run Notebooks
-        run: |
-          export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
-          python notebooks/train_model_py.py  # Run tests located in the tests directory
-          python notebooks/run_model_inference_py.py  # Run tests located in the tests directory
+#       - name: Install databricks CLI
+#         run: |
+#          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+#       - name: Set up Databricks CLI
+#         env: 
+#           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+#           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+#         run: |
+#           databricks repos list
+#       - name: Install dependencies
+#         run: |
+#           pip install -r requirements.txt
+#       - name: Set PYTHONPATH and Run Notebooks
+#         run: |
+#           export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
+#           python notebooks/train_model_py.py  # Run tests located in the tests directory
+#           python notebooks/run_model_inference_py.py  # Run tests located in the tests directory
       # - name: Set PYTHONPATH and Run Tests
       #   run: |
       #     export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
       #     pytest tests  # Run tests located in the tests directory
 
-# name: Execute Databricks Notebook
+name: Execute Databricks Notebook
  
-# on:
-#   push:
-#     branches:
-#       - dev
-#   workflow_dispatch:
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
  
-# jobs:
-#   run-databricks-notebook:
-#     runs-on: ubuntu-latest
+jobs:
+  run-databricks-notebook:
+    runs-on: ubuntu-latest
  
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v3
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
  
-#     - name: Run Databricks Notebook
-#       env:
-#         DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-#         DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-#       run: |
-#         # Trigger a Databricks job to execute the notebook
-#         curl -X POST "$DATABRICKS_HOST/api/2.1/jobs/runs/submit" \
-#           --header "Authorization: Bearer $DATABRICKS_TOKEN" \
-#           --header "Content-Type: application/json" \
-#           --data '{
-#             "run_name": "Execute Databricks Notebook",
-#             "new_cluster": {
-#               "spark_version": "11.3.x-scala2.12",
-#               "node_type_id": "i3.xlarge",
-#               "num_workers": 2
-#             },
-#             "notebook_task": {
-#               "notebook_path": "/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_ipynb.py"
-#             }
-#           }'
+    - name: Run Databricks Notebook
+      env:
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      run: |
+        # Trigger a Databricks job to execute the notebook
+        curl -X POST "$DATABRICKS_HOST/api/2.1/jobs/runs/submit" \
+          --header "Authorization: Bearer $DATABRICKS_TOKEN" \
+          --header "Content-Type: application/json" \
+          --data '{
+            "run_name": "Execute Databricks Notebook",
+            "new_cluster": {
+              "spark_version": "11.3.x-scala2.12",
+              "node_type_id": "i3.xlarge",
+              "num_workers": 2
+            },
+            "notebook_task": {
+              "notebook_path": "/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_ipynb.py"
+            }
+          }'
 
 
