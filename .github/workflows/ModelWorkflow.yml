@@ -32,18 +32,18 @@ jobs:
     if: github.ref == 'refs/heads/dev' # This will only run on dev branch
 
     steps:
-      # - name: Set PYTHONPATH and Run Tests
-      #   run: |
-      #     export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
-      #     python tests/test_training.py  # Run tests located in the tests directory
-      #     python tests/test_inference.py  # Run tests located in the tests directory
-
-      - name: Run CLI Tool using Databricks credentials
-        env: 
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+      - name: Set PYTHONPATH and Run Tests
         run: |
-          python cli_tool/cli.py
+          export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
+          python tests/test_training.py  # Run tests located in the tests directory
+          python tests/test_inference.py  # Run tests located in the tests directory
+
+      # - name: Run CLI Tool using Databricks credentials
+      #   env: 
+      #     DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
+      #     DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+      #   run: |
+      #     python cli_tool/cli.py
 
   deploy-main:
     runs-on: ubuntu-latest
