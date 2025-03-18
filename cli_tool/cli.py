@@ -16,15 +16,15 @@ def cli():
 def deploy():
     """Deploys the Databricks jobs."""
     if not DATABRICKS_HOST or not DATABRICKS_TOKEN:
-        click.echo("❌ Missing Databricks credentials. Set DATABRICKS_HOST and DATABRICKS_TOKEN.")
+        click.echo("Missing Databricks credentials. Set DATABRICKS_HOST and DATABRICKS_TOKEN.")
         return
 
     manager = DatabricksJobManager(DATABRICKS_HOST, DATABRICKS_TOKEN)
     
-    click.echo("🚀 Creating Databricks jobs...")
+    click.echo("Creating Databricks jobs...")
     manager.create_training_job()
     manager.create_inference_job()
-    click.echo("✅ Deployment completed successfully!")
+    click.echo("Deployment completed successfully!")
 
 cli.add_command(deploy)
 

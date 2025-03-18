@@ -25,8 +25,8 @@ class WineDataProcessor:
 
     def load_data(self):
         """Loads wine datasets and preprocesses them."""
-        white_wine = spark.read.table("ml_clf_model_predictions.white_wine_training_data").toPandas()
-        red_wine = spark.read.table("ml_clf_model_predictions.red_wine_training_data").toPandas()
+        white_wine = spark.read.table("wine_quality_data.white_wine_training_data").toPandas()
+        red_wine = spark.read.table("wine_quality_data.red_wine_training_data").toPandas()
 
         red_wine['is_red'] = 1
         white_wine['is_red'] = 0

@@ -45,9 +45,9 @@ class DatabricksJobManager:
         )
 
         if response.status_code == 200:
-            print(f"✅ Job '{job_name}' created successfully!")
+            print(f"Job '{job_name}' created successfully!")
         else:
-            print(f"❌ Failed to create job '{job_name}': {response.text}")
+            print(f"Failed to create job '{job_name}': {response.text}")
 
     def create_training_job(self):
         """Creates the training job (Runs every 30 days)."""

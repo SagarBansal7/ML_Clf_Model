@@ -55,7 +55,7 @@ class WineDataProcessor:
 
     def load_data(self):
         """Loads red and white wine datasets and preprocesses them."""
-        data = spark.read.table("ml_clf_model_predictions.wine_quality_inference_data").toPandas()
+        data = spark.read.table("wine_quality_data.wine_quality_inference_data").toPandas()
         
         # Check for missing columns
         missing_cols = [col for col in self.feature_columns if col not in data.columns]
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     predictions = predictor.predict()
 
     # Save results to Delta table in Unity Catalog
-    spark.createDataFrame(predictions).write.format("delta").mode("overwrite").saveAsTable(f"ml_clf_model_predictions.wine_quality_predictions")
+    spark.createDataFrame(predictions).write.format("delta").mode("overwrite").saveAsTable(f"wine_quality_data.wine_quality_predictions")
 
     # Print results
     for i, pred in enumerate(predictions):
