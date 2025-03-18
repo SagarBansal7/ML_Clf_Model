@@ -20,8 +20,14 @@ jobs:
         run: |
          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
       - name: Set up Databricks CLI
+        env: 
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          databricks configure --host ${{ secrets.DATABRICKS_HOST }} --token ${{ secrets.DATABRICKS_TOKEN }}
+          databricks repos list
+        #   databricks configure --host ${{ secrets.DATABRICKS_HOST }} --token ${{ secrets.DATABRICKS_TOKEN }}
+        # run: |
+        #   echo "${{ secrets.DATABRICKS_HOST }}"
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
