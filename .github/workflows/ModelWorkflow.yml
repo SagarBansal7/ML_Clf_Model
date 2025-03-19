@@ -13,18 +13,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11.10"
-      
-      - name: Install databricks CLI
-        run: |
-         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
 
   deploy-dev:
     runs-on: ubuntu-latest
@@ -37,7 +26,18 @@ jobs:
       #     export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
       #     python tests/test_training.py  # Run tests located in the tests directory
       #     python tests/test_inference.py  # Run tests located in the tests directory
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11.10"
+      
+      - name: Install databricks CLI
+        run: |
+         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
       - name: Run CLI Tool using Databricks credentials
         env: 
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
