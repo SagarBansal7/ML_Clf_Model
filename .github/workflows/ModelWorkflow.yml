@@ -12,20 +12,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
-
-
-  deploy-dev:
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/dev' # This will only run on dev branch
-
-    steps:
-      # - name: Set PYTHONPATH and Run Tests
-      #   run: |
-      #     export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
-      #     python tests/test_training.py  # Run tests located in the tests directory
-      #     python tests/test_inference.py  # Run tests located in the tests directory
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -38,6 +24,27 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+      
+      - name: Run CLI Tool using Databricks credentials
+        env: 
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+        run: |
+          export PYTHONPATH=cli_tool
+          python cli_tool/cli.py
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/dev' # This will only run on dev branch
+
+    steps:
+      # - name: Set PYTHONPATH and Run Tests
+      #   run: |
+      #     export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
+      #     python tests/test_training.py  # Run tests located in the tests directory
+      #     python tests/test_inference.py  # Run tests located in the tests directory
+      
       - name: Run CLI Tool using Databricks credentials
         env: 
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
