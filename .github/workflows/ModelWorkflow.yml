@@ -34,6 +34,7 @@ jobs:
           python cli_tool/cli.py
       - name: Run Notebooks
         run: |
+          notebooks/train_model_py.py configure
           python notebooks/train_model_py.py  # Run tests located in the tests directory
           python notebooks/run_model_inference_py.py  # Run tests located in the tests directory
 
