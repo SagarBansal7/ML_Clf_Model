@@ -23,11 +23,7 @@ class DatabricksJobManager:
                     "notebook_task": {
                         "notebook_path": notebook_path
                     },
-                    "new_cluster": {
-                        "spark_version": "11.3.x-scala2.12",
-                        "num_workers": 2,
-                        "node_type_id": "Standard_DS3_v2"
-                    }
+                    "existing_cluster_id": 'd41d0757355fafed'
                 }
             ]
         }
