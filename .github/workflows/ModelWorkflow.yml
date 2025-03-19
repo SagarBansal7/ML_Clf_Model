@@ -56,7 +56,7 @@ jobs:
           python tests/test_training.py  # Run tests located in the tests directory
           python tests/test_inference.py  # Run tests located in the tests directory
       
-      # - name: Run CLI Tool using Databricks credentials
+      # - name: Run CLI Tool using Databricks credentials.
       #   env: 
       #     DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
       #     DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
