@@ -32,10 +32,14 @@ jobs:
         run: |
           export PYTHONPATH=cli_tool
           python cli_tool/cli.py
+      - name: Run Notebooks
+        run: |
+          python notebooks/train_model_py.py  # Run tests located in the tests directory
+          python notebooks/run_model_inference_py.py  # Run tests located in the tests directory
+
       - name: Set PYTHONPATH and Run Tests
         run: |
           export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
-          tests/test_training.py configure
           python tests/test_training.py  # Run tests located in the tests directory
           python tests/test_inference.py  # Run tests located in the tests directory
 
