@@ -54,7 +54,7 @@ class DatabricksJobManager:
         self.create_job(
             job_name="Train Classification Model",
             notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_py.py",
-            schedule="0 0 1 */1 *"  # Runs every 30 days
+            schedule="0 0 0 1 * ? *"  # Runs every 30 days
         )
 
     def create_inference_job(self):
@@ -62,5 +62,5 @@ class DatabricksJobManager:
         self.create_job(
             job_name="Run Inference",
             notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/run_model_inference_py.py",
-            schedule="0 0 * * *"  # Runs daily
+            schedule="0 0 0 * * ? *"  # Runs daily
         )
