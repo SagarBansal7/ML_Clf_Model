@@ -82,3 +82,6 @@ def test_feature_importance(mock_data, mock_model):
     assert 'importance' in feature_importance.columns, "Feature importance DataFrame should contain 'importance' column"
     assert feature_importance.shape[0] == X_train.shape[1], "Feature importance should match the number of features"
 
+#To test in UI
+if __name__ == "__main__":
+    pytest.main()

@@ -47,3 +47,8 @@ def test_prediction_output(mock_model_loader, mock_data_processor):
     assert isinstance(predictions, np.ndarray), "Predictions should be a numpy array"
     assert predictions.shape == (5,), "Prediction shape should match the number of input samples"
     assert np.all((predictions >= 0) & (predictions <= 1)), "Predictions should be between 0 and 1"
+
+
+#To test in UI
+if __name__ == "__main__":
+    pytest.main()
