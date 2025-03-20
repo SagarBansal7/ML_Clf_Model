@@ -36,6 +36,15 @@ class WineDataProcessor:
         df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
         df_catalog = spark.sql("SHOW CATALOGS").toPandas()
         #df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
+        db = spark.catalog.listDatabases()
+        for database1 in db:
+            print("database_name:", database1.name)
+
+            spark.catalog.setCurrentDatabase(database1.name)
+    
+            tables = spark.catalog.listTables()
+            for table in tables:
+            print("table_name:", table.name)
 
         print("Current Schema:", df_schema['catalog'][0], df_schema['namespace'][0], "Catalogs:", list(df_catalog['catalog'])  )
         
