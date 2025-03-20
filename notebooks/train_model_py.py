@@ -30,9 +30,9 @@ class WineDataProcessor:
 
     def load_data(self):
         """Loads wine datasets and preprocesses them."""
-        spark.sql("USE SCHEMA wine_quality_data")
-        white_wine = spark.read.table("white_wine_training_data").toPandas()
-        red_wine = spark.read.table("red_wine_training_data").toPandas()
+        #spark.sql("USE SCHEMA wine_quality_data")
+        white_wine = spark.read.table("workspace.white_wine_training_data").toPandas()
+        red_wine = spark.read.table("workspace.red_wine_training_data").toPandas()
 
         red_wine['is_red'] = 1
         white_wine['is_red'] = 0
