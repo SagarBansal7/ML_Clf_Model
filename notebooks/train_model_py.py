@@ -30,7 +30,8 @@ class WineDataProcessor:
 
     def load_data(self):
         """Loads wine datasets and preprocesses them."""
-        #spark.sql("USE SCHEMA wine_quality_data")
+        spark.sql("USE catalog workspace")
+        spark.sql("USE schema default")
         df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
         print("Current Schema:", df_schema['catalog'][0], df_schema['namespace'][0] )
         white_wine = spark.read.format("delta").table("white_wine_training_data").toPandas()
