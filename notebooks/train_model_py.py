@@ -44,7 +44,7 @@ class WineDataProcessor:
     
             tables = spark.catalog.listTables()
             for table in tables:
-            print("table_name:", table.name)
+                print("table_name:", table.name)
 
         print("Current Schema:", df_schema['catalog'][0], df_schema['namespace'][0], "Catalogs:", list(df_catalog['catalog'])  )
         
