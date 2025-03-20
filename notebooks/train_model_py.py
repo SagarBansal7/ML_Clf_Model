@@ -30,7 +30,7 @@ class WineDataProcessor:
 
     def load_data(self):
         """Loads wine datasets and preprocesses them."""
-        sql("USE wine_quality_data")
+        spark.sql("USE wine_quality_data")
         white_wine = spark.read.table("white_wine_training_data").toPandas()
         red_wine = spark.read.table("red_wine_training_data").toPandas()
 
