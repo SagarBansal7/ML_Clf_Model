@@ -22,8 +22,7 @@ class DatabricksJobManager:
                     "task_key": job_name.replace(" ", "_").lower(),
                     "notebook_task": {
                         "notebook_path": notebook_path
-                    },
-                    "existing_cluster_id": 'd41d0757355fafed'
+                    }
                 }
             ]
         }
