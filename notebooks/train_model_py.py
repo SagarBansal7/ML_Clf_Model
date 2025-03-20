@@ -33,8 +33,8 @@ class WineDataProcessor:
         #spark.sql("USE SCHEMA wine_quality_data")
         df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
         print("Current Schema:", df_schema['catalog'][0], df_schema['namespace'][0] )
-        white_wine = spark.read.table("white_wine_training_data").toPandas()
-        red_wine = spark.read.table("red_wine_training_data").toPandas()
+        white_wine = spark.read.format("delta").table("white_wine_training_data").toPandas()
+        red_wine = spark.read.format("delta").table("red_wine_training_data").toPandas()
 
         red_wine['is_red'] = 1
         white_wine['is_red'] = 0
