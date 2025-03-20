@@ -32,11 +32,6 @@ jobs:
         run: |
           export PYTHONPATH=cli_tool
           python cli_tool/cli.py deploy
-      - name: Run Notebooks
-        run: |
-          python notebooks/train_model_py.py configure
-          python notebooks/run_model_inference_py.py  # Run tests located in the tests directory
-        #python notebooks/train_model_py.py  # Run tests located in the tests directory
         
       - name: Set PYTHONPATH and Run Tests
         run: |
