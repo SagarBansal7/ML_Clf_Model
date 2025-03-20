@@ -27,6 +27,7 @@ jobs:
      
       - name: Run CLI Tool using Databricks credentials
         env: 
+          MLFLOW_TRACKING_URI: "databricks"
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
         run: |
