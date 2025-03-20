@@ -40,7 +40,7 @@ class WineDataProcessor:
         print("Current Schema:", df_schema['catalog'][0], df_schema['namespace'][0], "Catalogs:", list(df_catalog['catalog'])  )
         
         spark.sql("USE CATALOG workspace;")
-        spark.sql("USE schema default")
+        spark.sql("USE schema default;")
         
         white_wine = spark.read.format("delta").table("white_wine_training_data").toPandas()
         red_wine = spark.read.format("delta").table("red_wine_training_data").toPandas()

@@ -38,6 +38,10 @@ jobs:
           python cli_tool/cli.py deploy
         
       - name: Set PYTHONPATH and Run Tests
+        env: 
+          MLFLOW_TRACKING_URI: "databricks"
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
         run: |
           export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
           python notebooks/train_model_py.py  # Run tests located in the tests directory
