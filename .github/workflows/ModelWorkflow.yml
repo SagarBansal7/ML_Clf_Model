@@ -11,7 +11,7 @@ jobs:
     env: 
       MLFLOW_TRACKING_URI: "databricks"
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host. 
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -41,7 +41,7 @@ jobs:
         env: 
           MLFLOW_TRACKING_URI: "databricks"
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
           python notebooks/train_model_py.py  # Run tests located in the tests directory
