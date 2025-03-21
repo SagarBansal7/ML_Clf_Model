@@ -28,14 +28,14 @@ jobs:
         run: |
           pip install -r requirements.txt
      
-      - name: Run CLI Tool using Databricks credentials
-        env: 
-          MLFLOW_TRACKING_URI: "databricks"
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
-        run: |
-          export PYTHONPATH=cli_tool
-          python cli_tool/cli.py deploy
+      # - name: Run CLI Tool using Databricks credentials
+      #   env: 
+      #     MLFLOW_TRACKING_URI: "databricks"
+      #     DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host 
+      #     DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+      #   run: |
+      #     export PYTHONPATH=cli_tool
+      #     python cli_tool/cli.py deploy
         
       - name: Set PYTHONPATH and Run Tests
         env: 

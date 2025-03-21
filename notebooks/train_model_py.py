@@ -83,7 +83,7 @@ class SklearnModelWrapper(mlflow.pyfunc.PythonModel):
         self.model = model
 
     def predict(self, context, model_input):
-        return self.model.predict_proba(model_input)[:,1]
+        return self.model.predict(model_input)[:,1]
 
 # 3. Machine Learning Model Class
 class WineQualityModel:
@@ -96,7 +96,7 @@ class WineQualityModel:
 
     def evaluate(self, X_test, y_test):
         """Evaluates the model using ROC AUC score."""
-        predictions = self.model.predict_proba(X_test)[:,1]
+        predictions = self.model.predict(X_test)[:,1]
         auc_score = roc_auc_score(y_test, predictions)
         return auc_score
 
@@ -161,7 +161,6 @@ if __name__ == "__main__":
     run_id = experiment.run_experiment(wine_model, X_train, X_test, y_train, y_test)
     model_version = experiment.register_model(run_id)
     
-
     # Feature Importance
     feature_importance = FeatureImportance.get_importance(wine_model, X_train)
     print(feature_importance)

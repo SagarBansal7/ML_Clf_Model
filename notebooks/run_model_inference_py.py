@@ -41,7 +41,7 @@ class ModelLoader:
         """Loads the model from MLflow registry."""
         model_uri = f"models:/{self.model_name}/{self.model_version}" if self.model_version else f"models:/{self.model_name}@production"
         self.model = mlflow.pyfunc.load_model(model_uri)
-        print(f"✅ Model '{self.model_name}' loaded successfully.")
+        print(f"Model '{self.model_name}' loaded successfully.")
 
     def get_model(self):
         """Returns the loaded model instance."""
@@ -83,6 +83,8 @@ class WineQualityPredictor:
         """Runs inference on input data."""
         processed_data = self.preprocessor.load_data()
         predictions = self.model.predict(processed_data)
+        predictions_df = pd.DataFrame(predictions, columns=["prediction"])
+        predictions_df
         return predictions
 
 #4. Save to Delta Table
@@ -106,7 +108,7 @@ class DeltaTableSaver:
         full_table_path = f"{self.catalog}.{self.schema}.{self.table_name}"
         spark_df.write.mode("overwrite").format("delta").saveAsTable(full_table_path)
 
-        print(f"✅ Predictions saved to Delta table: {full_table_path}")
+        print(f"Predictions saved to Delta table: {full_table_path}")
 
 # Main Execution
 if __name__ == "__main__":
@@ -124,6 +126,9 @@ if __name__ == "__main__":
 
     # Initialize preprocessor
     preprocessor = WineDataProcessor(FEATURE_COLUMNS)
+
+    #To review the data
+    #print(preprocessor.load_data())
 
     # Initialize predictor
     predictor = WineQualityPredictor(model_loader, preprocessor)
