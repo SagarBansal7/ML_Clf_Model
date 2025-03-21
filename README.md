@@ -1,4 +1,4 @@
-# ML_Clf_Model - Wine Quality Prediction Documentation
+# Wine Quality Prediction Documentation
 
 ## Repository Overview
 
