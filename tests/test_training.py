@@ -1,7 +1,7 @@
 # !pip install pytest
 # !pip install mlflow
 import sys
-sys.path.insert(0, '/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks')
+sys.path.insert(0, '/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediciton_Model/notebooks')
 
 import pytest
 import pandas as pd

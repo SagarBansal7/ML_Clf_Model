@@ -6,7 +6,8 @@ on:
       - main
 
 jobs:
-  build:
+  dev:
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     env: 
       MLFLOW_TRACKING_URI: "databricks"
@@ -19,11 +20,28 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+      
+      - name: Install databricks CLI
+        run: |
+         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      
+      - name: Verify Databricks CLI Installation
+        run: |
+          databricks --version
 
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          
+      - name: Run CLI Tool using Databricks credentials
+        run: |
+          export PYTHONPATH=cli_tool
+          python cli_tool/cli.py deploy
 
+      - name: Set PYTHONPATH and Run Tests
+        run: |
+          export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
+          pytests tests  # Run tests located in the tests directory
       # - name: Run CLI Tool using Databricks credentials
       #   env: 
       #     MLFLOW_TRACKING_URI: "databricks"
@@ -41,42 +59,27 @@ jobs:
       #   run: |
       #     export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
       #     python notebooks/train_model_py.py  # Run tests located in the tests directory
-  deploy-dev:
-    runs-on: ubuntu-latest
-    env: 
-      MLFLOW_TRACKING_URI: "databricks"
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host. 
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
-    needs: build
-    if: github.ref == 'refs/heads/dev' # This will only run on dev branch
+  # deploy-dev:
+  #   runs-on: ubuntu-latest
+  #   env: 
+  #     MLFLOW_TRACKING_URI: "databricks"
+  #     DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host. 
+  #     DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+  #   needs: build
+  #   if: github.ref == 'refs/heads/dev' # This will only run on dev branch
 
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
+  #   steps:
 
-      - name: Install databricks CLI
-        run: |
-         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
       
-      - name: Verify Databricks CLI Installation
-        run: |
-          databricks --version     
+  #     - name: Run CLI Tool using Databricks credentials
+  #       run: |
+  #         export PYTHONPATH=cli_tool
+  #         python cli_tool/cli.py deploy
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Run CLI Tool using Databricks credentials
-        run: |
-          export PYTHONPATH=cli_tool
-          python cli_tool/cli.py deploy
-
-      - name: Set PYTHONPATH and Run Tests
-        run: |
-          export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
-          pytests tests  # Run tests located in the tests directory
+  #     - name: Set PYTHONPATH and Run Tests
+  #       run: |
+  #         export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
+  #         pytests tests  # Run tests located in the tests directory
   
   deploy-main:
     runs-on: ubuntu-latest
