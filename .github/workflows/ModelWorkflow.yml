@@ -25,6 +25,10 @@ jobs:
          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
       
       - name: Verify Databricks CLI Installation
+        env: 
+          MLFLOW_TRACKING_URI: "databricks"
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host. 
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           databricks --version
 
