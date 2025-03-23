@@ -19,14 +19,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      
-      - name: Install databricks CLI
-        run: |
-         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
-      
-      - name: Verify Databricks CLI Installation
-        run: |
-          databricks --version
 
       - name: Install dependencies
         run: |
@@ -59,6 +51,14 @@ jobs:
     if: github.ref == 'refs/heads/dev' # This will only run on dev branch
 
     steps:
+      - name: Install databricks CLI
+        run: |
+         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      
+      - name: Verify Databricks CLI Installation
+        run: |
+          databricks --version     
+          
       - name: Run CLI Tool using Databricks credentials
         run: |
           export PYTHONPATH=cli_tool
