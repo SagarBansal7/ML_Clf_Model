@@ -15,8 +15,9 @@ from mlflow.models.signature import infer_signature
 from mlflow.utils.environment import _mlflow_conda_env
 import cloudpickle
 import time
+import os
 from pyspark.sql.session import SparkSession
-spark = SparkSession.builder.getOrCreate()
+
 
 # Load Databricks credentials from environment variables
 DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
