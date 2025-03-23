@@ -1,4 +1,4 @@
-# !pip install mlflow
+#!pip install mlflow
 
 import pandas as pd
 import seaborn as sns
@@ -62,10 +62,10 @@ class WineDataProcessor:
         
         #Catalog - throws error here
         spark.sql("USE CATALOG workspace;")
-        spark.sql("USE schema default;")
+        spark.sql("USE schema wine_quality_data;")
         
-        white_wine = spark.read.format("delta").table("workspace.default.white_wine_training_data").toPandas()
-        red_wine = spark.read.format("delta").table("workspace.default.red_wine_training_data").toPandas()
+        white_wine = spark.read.format("delta").table("workspace.wine_quality_data.white_wine_training_data").toPandas()
+        red_wine = spark.read.format("delta").table("workspace.wine_quality_data.red_wine_training_data").toPandas()
 
         red_wine['is_red'] = 1
         white_wine['is_red'] = 0
