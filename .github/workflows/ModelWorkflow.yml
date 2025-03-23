@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+      - stage
       - main
 
 jobs:
@@ -43,6 +44,43 @@ jobs:
           export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
           pytest tests  # Run tests located in the tests directory
   
+  stage:
+    if: github.ref == 'refs/heads/stage'
+    runs-on: ubuntu-latest
+    env: 
+      MLFLOW_TRACKING_URI: "databricks"
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_STAGE }} #Workspace level host. 
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_STAGE }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      
+      - name: Install databricks CLI
+        run: |
+         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      
+      - name: Verify Databricks CLI Installation
+        run: |
+          databricks --version
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run CLI Tool using Databricks credentials
+        run: |
+          export PYTHONPATH=cli_tool
+          python cli_tool/cli.py deploy
+
+      - name: Set PYTHONPATH and Run Tests
+        run: |
+          export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
+          pytest tests  # Run tests located in the tests directory
+
   main:
     runs-on: ubuntu-latest
     env: 
