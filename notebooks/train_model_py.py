@@ -27,10 +27,10 @@ DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
 
 DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
 
+spark = SparkSession.builder.config("spark.databricks.service.client.enabled", "true").config("spark.databricks.service.token", DATABRICKS_TOKEN).config("spark.databricks.unityCatalog.enabled", "true").getOrCreate()
+
 #Spark version check
 print(spark.version)
-
-spark = SparkSession.builder.config("spark.databricks.service.client.enabled", "true").config("spark.databricks.service.token", DATABRICKS_TOKEN).config("spark.databricks.unityCatalog.enabled", "true").getOrCreate()
 
 #mlflow uri setup
 mlflow.set_registry_uri("databricks-uc")
