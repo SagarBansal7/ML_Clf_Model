@@ -155,7 +155,6 @@ python cli_tool/cli.py deploy
 ## Future Enhancements
 - With additional time, other free tier options can be explored that allows compute configuration and CLI usage.
 - We can also explore the config and access enablement when running through Github Actions vs UI. 
-- Current setup has dev and main(prod) branches. Stage can be added as an additional branch/env.
 - In addition to MLFlow, more comprehensive post-deployment monitoring tool and data quality check tool can be added.
 - Automation can be added to update the prod databricks files when a push to main(prod) branch has been made in git.
 
