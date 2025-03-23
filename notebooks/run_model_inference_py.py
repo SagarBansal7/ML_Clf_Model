@@ -18,6 +18,16 @@ import time
 from pyspark.sql.session import SparkSession
 spark = SparkSession.builder.getOrCreate()
 
+# Load Databricks credentials from environment variables
+DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
+DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
+
+#Create a SparkSession and set it as the default context
+spark = SparkSession.builder.config("spark.databricks.service.client.enabled", "true").config("spark.databricks.service.token", DATABRICKS_TOKEN).config("spark.databricks.unityCatalog.enabled", "true").getOrCreate()
+
+#Spark version check
+print(spark.version)
+
 # Set the MLflow model registry URI
 #spark.conf.set("spark.mlflow.modelRegistryUri", "databricks")
 mlflow.set_registry_uri("databricks-uc")

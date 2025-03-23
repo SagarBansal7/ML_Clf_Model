@@ -13,8 +13,6 @@ jobs:
       MLFLOW_TRACKING_URI: "databricks"
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host. 
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
-      CATALOG_NAME: "workspace"
-      SCHEMA_NAME: "wine_quality_data"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3

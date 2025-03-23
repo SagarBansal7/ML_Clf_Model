@@ -6,8 +6,6 @@ from databricks_jobs import DatabricksJobManager
 # Load Databricks credentials from environment variables
 DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
 DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
-CATALOG_NAME = os.getenv("CATALOG_NAME")
-SCHEMA_NAME = os.getenv("SCHEMA_NAME")
 
 @click.group(context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
 def cli():
@@ -21,7 +19,7 @@ def deploy():
         click.echo("Missing Databricks credentials. Set DATABRICKS_HOST and DATABRICKS_TOKEN.")
         return
 
-    manager = DatabricksJobManager(DATABRICKS_HOST, DATABRICKS_TOKEN, CATALOG_NAME, SCHEMA_NAME)
+    manager = DatabricksJobManager(DATABRICKS_HOST, DATABRICKS_TOKEN)
     
     click.echo("Creating Databricks jobs...")
     manager.create_training_job()

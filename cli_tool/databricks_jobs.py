@@ -5,13 +5,9 @@ import os
 class DatabricksJobManager:
     """Class to create and manage Databricks jobs."""
 
-    def __init__(self, databricks_host, databricks_token, catalog_name, schema_name):
+    def __init__(self, databricks_host, databricks_token):
         self.databricks_host = databricks_host
         self.databricks_token = databricks_token
-        self.parameters = {
-            "catalog": catalog_name,
-            "schema": schema_name
-        }
         self.headers = {
             "Authorization": f"Bearer {self.databricks_token}",
             "Content-Type": "application/json"
@@ -25,8 +21,7 @@ class DatabricksJobManager:
                 {
                     "task_key": job_name.replace(" ", "_").lower(),
                     "spark_python_task": {
-                        "python_file": notebook_path,
-                        "base_parameters": self.parameters,
+                        "python_file": notebook_path
                     }
                 }
             ]
