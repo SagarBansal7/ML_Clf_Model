@@ -21,12 +21,7 @@ class DatabricksJobManager:
                 {
                     "task_key": job_name.replace(" ", "_").lower(),
                     "notebook_task": {
-                        "notebook_path": notebook_path
-                    },
-                    "new_cluster": {
-                        "spark_version": "11.3.x-scala2.12",
-                        "num_workers": 2,
-                        "node_type_id": "Standard_DS3_v2"
+                         "notebook_path": notebook_path
                     }
                 }
             ]
@@ -53,14 +48,14 @@ class DatabricksJobManager:
         """Creates the training job (Runs every 30 days)."""
         self.create_job(
             job_name="Train Classification Model",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_py.py",
-            schedule="0 0 1 */1 *"  # Runs every 30 days
+            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py",
+            schedule="0 0 0 1 * ? *"  # Runs every 30 days
         )
 
     def create_inference_job(self):
         """Creates the inference job (Runs daily)."""
         self.create_job(
             job_name="Run Inference",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/run_model_inference_py.py",
-            schedule="0 0 * * *"  # Runs daily
+            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_model_inference_py.py",
+            schedule="0 0 0 * * ? *"  # Runs daily
         )

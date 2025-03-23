@@ -1,7 +1,7 @@
 # !pip install pytest
 # !pip install mlflow
 import sys
-sys.path.insert(0, '/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks')
+sys.path.insert(0, '/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediciton_Model/notebooks')
 
 import pytest
 import pandas as pd
@@ -82,3 +82,6 @@ def test_feature_importance(mock_data, mock_model):
     assert 'importance' in feature_importance.columns, "Feature importance DataFrame should contain 'importance' column"
     assert feature_importance.shape[0] == X_train.shape[1], "Feature importance should match the number of features"
 
+#To test in UI
+# if __name__ == "__main__":
+#     pytest.main()

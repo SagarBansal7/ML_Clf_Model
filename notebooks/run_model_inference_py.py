@@ -15,14 +15,25 @@ from mlflow.models.signature import infer_signature
 from mlflow.utils.environment import _mlflow_conda_env
 import cloudpickle
 import time
+import os
 from pyspark.sql.session import SparkSession
-spark = SparkSession.builder.getOrCreate()
+
+
+# Load Databricks credentials from environment variables
+DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
+DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
+
+#Create a SparkSession and set it as the default context
+spark = SparkSession.builder.config("spark.databricks.service.client.enabled", "true").config("spark.databricks.service.token", DATABRICKS_TOKEN).config("spark.databricks.unityCatalog.enabled", "true").getOrCreate()
+
+#Spark version check
+print(spark.version)
 
 # Set the MLflow model registry URI
 #spark.conf.set("spark.mlflow.modelRegistryUri", "databricks")
 mlflow.set_registry_uri("databricks-uc")
 mlflow.set_tracking_uri("databricks")
-mlflow.set_experiment("/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_py.py") 
+mlflow.set_experiment("/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py") 
 
 # 1. Model Loader Class
 class ModelLoader:
@@ -41,7 +52,7 @@ class ModelLoader:
         """Loads the model from MLflow registry."""
         model_uri = f"models:/{self.model_name}/{self.model_version}" if self.model_version else f"models:/{self.model_name}@production"
         self.model = mlflow.pyfunc.load_model(model_uri)
-        print(f"✅ Model '{self.model_name}' loaded successfully.")
+        print(f"Model '{self.model_name}' loaded successfully.")
 
     def get_model(self):
         """Returns the loaded model instance."""
@@ -83,30 +94,12 @@ class WineQualityPredictor:
         """Runs inference on input data."""
         processed_data = self.preprocessor.load_data()
         predictions = self.model.predict(processed_data)
-        return predictions
-
-#4. Save to Delta Table
-class DeltaTableSaver:
-    def __init__(self, catalog, schema, table_name):
-        """
-        Initializes the DeltaTableSaver class.
-
-        :param catalog: The Unity Catalog name.
-        :param schema: The schema (database) name.
-        :param table_name: The Delta table name.
-        """
-        self.catalog = catalog
-        self.schema = schema
-        self.table_name = table_name
-
-    def save_to_delta(self, df):
-        """Saves the DataFrame as a Delta table in Unity Catalog."""
-        spark_df = spark.createDataFrame(df)
-
-        full_table_path = f"{self.catalog}.{self.schema}.{self.table_name}"
-        spark_df.write.mode("overwrite").format("delta").saveAsTable(full_table_path)
-
-        print(f"✅ Predictions saved to Delta table: {full_table_path}")
+        
+        predictions_df = pd.DataFrame(predictions, columns=["prediction"])
+        predictions_df
+        results_df = pd.concat([processed_data, predictions_df], axis =1)
+        results_df['prediction'] = results_df['prediction'].map(lambda x: 1 if x > 0.5 else 0)
+        return results_df
 
 # Main Execution
 if __name__ == "__main__":
@@ -125,15 +118,22 @@ if __name__ == "__main__":
     # Initialize preprocessor
     preprocessor = WineDataProcessor(FEATURE_COLUMNS)
 
+    #To review the data
+    #print(preprocessor.load_data())
+
     # Initialize predictor
     predictor = WineQualityPredictor(model_loader, preprocessor)
 
     # Run inference
-    predictions = predictor.predict()
+    results_df = predictor.predict()
+    
+    #View the results sample
+    print("here are the results:")
+    print(results_df.head())
 
     # Save results to Delta table in Unity Catalog
-    spark.createDataFrame(predictions).write.format("delta").mode("overwrite").saveAsTable(f"wine_quality_data.wine_quality_predictions")
+    spark.createDataFrame(results_df).write.format("delta").mode("overwrite").saveAsTable(f"wine_quality_data.wine_quality_predictions")
 
     # Print results
-    for i, pred in enumerate(predictions):
+    for i, pred in enumerate(results_df['prediction']):
         print(f"Sample {i+1} → High Quality Probability: {pred:.2f}")
