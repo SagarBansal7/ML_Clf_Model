@@ -5,9 +5,10 @@ import os
 class DatabricksJobManager:
     """Class to create and manage Databricks jobs."""
 
-    def __init__(self, databricks_host, databricks_token):
+    def __init__(self, databricks_host, databricks_token, parameters):
         self.databricks_host = databricks_host
         self.databricks_token = databricks_token
+        self.parameters = parameters
         self.headers = {
             "Authorization": f"Bearer {self.databricks_token}",
             "Content-Type": "application/json"
@@ -20,8 +21,9 @@ class DatabricksJobManager:
             "tasks": [
                 {
                     "task_key": job_name.replace(" ", "_").lower(),
-                    "notebook_task": {
-                        "notebook_path": notebook_path
+                    "spark_python_task": {
+                        "python_file": notebook_path,
+                        "base_parameters": self.parameters,
                     }
                 }
             ]
@@ -48,7 +50,7 @@ class DatabricksJobManager:
         """Creates the training job (Runs every 30 days)."""
         self.create_job(
             job_name="Train Classification Model",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_py.py",
+            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py",
             schedule="0 0 0 1 * ? *"  # Runs every 30 days
         )
 
@@ -56,6 +58,6 @@ class DatabricksJobManager:
         """Creates the inference job (Runs daily)."""
         self.create_job(
             job_name="Run Inference",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/run_model_inference_py.py",
+            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_model_inference_py.py",
             schedule="0 0 0 * * ? *"  # Runs daily
         )

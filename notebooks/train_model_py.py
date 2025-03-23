@@ -19,14 +19,14 @@ from pyspark.sql.session import SparkSession
 import os
 
 # Load Databricks credentials from environment variables
-os.environ["DATABRICKS_HOST"] = "https://dbc-d953ac30-db10.cloud.databricks.com/"
+#os.environ["DATABRICKS_HOST"] = "https://dbc-d953ac30-db10.cloud.databricks.com/"
 #os.environ["DATABRICKS_TOKEN"] = ""
 
+# Load Databricks credentials from environment variables
 DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
-#DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
-
 DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
 
+#Create a SparkSession and set it as the default context
 spark = SparkSession.builder.config("spark.databricks.service.client.enabled", "true").config("spark.databricks.service.token", DATABRICKS_TOKEN).config("spark.databricks.unityCatalog.enabled", "true").getOrCreate()
 
 #Spark version check
@@ -45,23 +45,22 @@ class WineDataProcessor:
     def load_data(self):
         """Loads wine datasets and preprocesses them."""
 
-        #Debug the issue
-        df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
-        df_catalog = spark.sql("SHOW CATALOGS").toPandas()
-        #df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
+        #Debug the issue - print all databases and corresponding table names
         db = spark.catalog.listDatabases()
         for database1 in db:
             print("database_name:", database1.name)
-
             spark.catalog.setCurrentDatabase(database1.name)
-    
             tables = spark.catalog.listTables()
             for table in tables:
                 print("table_name:", table.name)
 
+        #Debug the issue - print all catalogs and schemas
+        df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
+        df_catalog = spark.sql("SHOW CATALOGS").toPandas()
+
         print("Current Schema:", df_schema['catalog'][0], df_schema['namespace'][0], "Catalogs:", list(df_catalog['catalog'])  )
         
-        #Catalog
+        #Catalog - throws error here
         spark.sql("USE CATALOG workspace;")
         spark.sql("USE schema default;")
         
