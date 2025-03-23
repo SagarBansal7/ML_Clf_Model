@@ -50,5 +50,5 @@ def test_prediction_output(mock_model_loader, mock_data_processor):
 
 
 #To test in UI
-if __name__ == "__main__":
-    pytest.main()
+# if __name__ == "__main__":
+#     pytest.main()
