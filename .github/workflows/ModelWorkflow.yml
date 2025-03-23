@@ -27,7 +27,11 @@ jobs:
       - name: Verify Databricks CLI Installation
         run: |
           databricks --version
-          
+
+      - name: Get clusters list
+        run: |
+          databricks clusters list
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
