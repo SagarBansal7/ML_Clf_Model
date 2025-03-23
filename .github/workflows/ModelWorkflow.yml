@@ -1,4 +1,4 @@
-name: CLF Model Workflow
+name: Wine Quality Prediction Model Workflow
 on: 
   push:
     branches:

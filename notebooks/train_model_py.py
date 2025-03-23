@@ -16,12 +16,26 @@ from mlflow.utils.environment import _mlflow_conda_env
 import cloudpickle
 import time
 from pyspark.sql.session import SparkSession
-spark = SparkSession.builder.getOrCreate()
+import os
+
+# Load Databricks credentials from environment variables
+os.environ["DATABRICKS_HOST"] = "https://dbc-d953ac30-db10.cloud.databricks.com/"
+#os.environ["DATABRICKS_TOKEN"] = ""
+
+DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
+#DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
+
+DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
+
+#Spark version check
+print(spark.version)
+
+spark = SparkSession.builder.config("spark.databricks.service.client.enabled", "true").config("spark.databricks.service.token", DATABRICKS_TOKEN).config("spark.databricks.unityCatalog.enabled", "true").getOrCreate()
 
 #mlflow uri setup
 mlflow.set_registry_uri("databricks-uc")
 mlflow.set_tracking_uri("databricks")
-mlflow.set_experiment("/Users/sagarbansal719@gmail.com/ML_Clf_Model/notebooks/train_model_py.py") 
+mlflow.set_experiment("/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py") 
 
 # 1. Data Processing Class
 class WineDataProcessor:
@@ -30,9 +44,8 @@ class WineDataProcessor:
 
     def load_data(self):
         """Loads wine datasets and preprocesses them."""
-        
 
-        
+        #Debug the issue
         df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
         df_catalog = spark.sql("SHOW CATALOGS").toPandas()
         #df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
@@ -48,11 +61,12 @@ class WineDataProcessor:
 
         print("Current Schema:", df_schema['catalog'][0], df_schema['namespace'][0], "Catalogs:", list(df_catalog['catalog'])  )
         
+        #Catalog
         spark.sql("USE CATALOG workspace;")
         spark.sql("USE schema default;")
         
-        white_wine = spark.read.format("delta").table("white_wine_training_data").toPandas()
-        red_wine = spark.read.format("delta").table("red_wine_training_data").toPandas()
+        white_wine = spark.read.format("delta").table("workspace.default.white_wine_training_data").toPandas()
+        red_wine = spark.read.format("delta").table("workspace.default.red_wine_training_data").toPandas()
 
         red_wine['is_red'] = 1
         white_wine['is_red'] = 0
@@ -83,7 +97,7 @@ class SklearnModelWrapper(mlflow.pyfunc.PythonModel):
         self.model = model
 
     def predict(self, context, model_input):
-        return self.model.predict(model_input)[:,1]
+        return self.model.predict_proba(model_input)[:,1]
 
 # 3. Machine Learning Model Class
 class WineQualityModel:
@@ -96,7 +110,7 @@ class WineQualityModel:
 
     def evaluate(self, X_test, y_test):
         """Evaluates the model using ROC AUC score."""
-        predictions = self.model.predict(X_test)[:,1]
+        predictions = self.model.predict_proba(X_test)[:,1]
         auc_score = roc_auc_score(y_test, predictions)
         return auc_score
 
@@ -120,6 +134,10 @@ class MLflowExperiment:
 
     def run_experiment(self, model, X_train, X_test, y_train, y_test):
         """Runs an MLflow experiment to log parameters and metrics."""
+        #Explicit set and verify the mlflow run
+        mlflow.set_tracking_uri("databricks")
+        print("Tracking UI:", mlflow.get_tracking_uri())
+        
         with mlflow.start_run(run_name='untuned_random_forest'):
             model.train(X_train, y_train)
             auc_score = model.evaluate(X_test, y_test)
@@ -153,6 +171,9 @@ if __name__ == "__main__":
     data = processor.load_data()
     X_train, X_val, X_test, y_train, y_val, y_test = processor.split_data()
 
+    #To review prediction data
+    print(y_test.head())
+    
     # Model Training
     wine_model = WineQualityModel()
     experiment = MLflowExperiment()
