@@ -34,7 +34,11 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host. 
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
+          export DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN }}
           databricks clusters list
+
+        #curl -X GET https://dbc-d953ac30-db10.cloud.databricks.com/api/2.0/clusters/list -H "Authorization: Bearer <your-personal-access-token>"
+
 
       - name: Install dependencies
         run: |
