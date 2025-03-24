@@ -25,8 +25,8 @@ class DatabricksJobManager:
             "tasks": [
                 {
                     "task_key": job_name.replace(" ", "_").lower(),
-                    "notebook_task": {
-                         "notebook_path": notebook_path,
+                    "spark_python_task": {
+                         "python_file": notebook_path,
                          "base_parameters": self.params
                     },
                     "environment_key": "db_job_key"
