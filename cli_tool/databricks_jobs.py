@@ -35,8 +35,13 @@ class DatabricksJobManager:
         "environments":[
             {   
                 "environment_key":"db_job_key",
-                "environment_name":"db_job_name",
-                "environment_type":"SERVERLESS"
+                "spec": {
+                    "client": "2",  
+                    "dependencies": [
+                        "/Workspace/my_project/dist.whl",
+                        "-r /Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/requirements.txt"
+                        ]
+                    }
             }
             ]
         }
