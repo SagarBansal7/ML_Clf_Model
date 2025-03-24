@@ -32,12 +32,12 @@ class DatabricksJobManager:
                     "environment_key": "db_job_key"
                 }
             ],
-        environments=[
-            Environment(
-                environment_key="db_job_key",
-                environment_name="db_job_name",
-                environment_type="SERVERLESS"
-                )
+        "environments":[
+            {   
+                "environment_key":"db_job_key",
+                "environment_name":"db_job_name",
+                "environment_type":"SERVERLESS"
+            }
             ]
         }
 
