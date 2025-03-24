@@ -33,6 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip setuptools wheel
+          pip install pyspark
           pip install -r requirements.txt
 
       - name: Run CLI Tool using Databricks credentials
