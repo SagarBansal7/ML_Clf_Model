@@ -66,7 +66,7 @@ class DatabricksJobManager:
     def create_training_job(self):
         """Creates the training job (Runs every 30 days)."""
         self.create_job(
-            job_name="Train Classification Model",
+            job_name="wine_quality_model_training_job",
             notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py",
             schedule="0 0 0 1 * ? *"  # Runs every 30 days
         )
@@ -74,7 +74,7 @@ class DatabricksJobManager:
     def create_inference_job(self):
         """Creates the inference job (Runs daily)."""
         self.create_job(
-            job_name="Run Inference",
+            job_name="wine_quality_model_inference_job",
             notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_model_inference_py.py",
             schedule="0 0 0 * * ? *"  # Runs daily
         )
