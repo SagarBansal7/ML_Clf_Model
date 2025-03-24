@@ -5,9 +5,14 @@ import os
 class DatabricksJobManager:
     """Class to create and manage Databricks jobs."""
 
-    def __init__(self, databricks_host, databricks_token):
+    def __init__(self, databricks_host, databricks_token, catalog, schema):
         self.databricks_host = databricks_host
         self.databricks_token = databricks_token
+        self.params = { 
+            "catalog": catalog,
+            "schema": schema
+
+        }
         self.headers = {
             "Authorization": f"Bearer {self.databricks_token}",
             "Content-Type": "application/json"
@@ -21,9 +26,18 @@ class DatabricksJobManager:
                 {
                     "task_key": job_name.replace(" ", "_").lower(),
                     "notebook_task": {
-                         "notebook_path": notebook_path
-                    }
+                         "notebook_path": notebook_path,
+                         "base_parameters": self.params
+                    },
+                    "environment_key": "db_job_key"
                 }
+            ],
+        environments=[
+            Environment(
+                environment_key="db_job_key",
+                environment_name="db_job_name",
+                environment_type="SERVERLESS"
+                )
             ]
         }
 
