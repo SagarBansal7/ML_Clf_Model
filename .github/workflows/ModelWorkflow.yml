@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       MLFLOW_TRACKING_URI: "databricks"
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }} #Workspace level host. 
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }} #Workspace level host
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
     if: github.ref == 'refs/heads/main' # This will only run on main branch
 
