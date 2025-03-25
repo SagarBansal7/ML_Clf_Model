@@ -27,7 +27,7 @@ class DatabricksJobManager:
                     "task_key": job_name.replace(" ", "_").lower(),
                     "spark_python_task": {
                          "python_file": notebook_path,
-                         "base_parameters": self.params
+                         "base_parameters": {}
                     },
                     "environment_key": "db_job_key"
                 }
@@ -55,6 +55,8 @@ class DatabricksJobManager:
         )
 
         if response.status_code == 200:
+            print("Host:", f"{self.databricks_host}api/2.1/jobs/create")
+            print("Config:", f"{job_config}")
             print(f"Job '{job_name}' created successfully!, {response}")
         else:
             print(f"Failed to create job '{job_name}': {response.text}")
