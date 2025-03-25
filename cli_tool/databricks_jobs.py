@@ -49,7 +49,7 @@ class DatabricksJobManager:
             }
 
         response = requests.post(
-            f"{self.databricks_host}/api/2.1/jobs/create",
+            f"{self.databricks_host}api/2.1/jobs/create",
             headers=self.headers,
             json=job_config
         )
