@@ -25,8 +25,8 @@ class DatabricksJobManager:
             "tasks": [
                 {
                     "task_key": job_name.replace(" ", "_").lower(),
-                    "notebook_task": {
-                         "notebook_path": notebook_path,
+                    "spark_python_task": {
+                         "python_file": notebook_path,
                          "base_parameters": self.params
                     },
                     "environment_key": "db_job_key"
@@ -41,9 +41,6 @@ class DatabricksJobManager:
             }
             ]
         }
-                    # "dependencies": [
-                    #     "-r /Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/requirements.txt"
-                    #     ]
 
         if schedule:
             job_config["schedule"] = {
@@ -58,7 +55,7 @@ class DatabricksJobManager:
         )
 
         if response.status_code == 200:
-            print(f"Job '{job_name}' created successfully!")
+            print(f"Job '{job_name}' created successfully!, {response}")
         else:
             print(f"Failed to create job '{job_name}': {response.text}")
 
