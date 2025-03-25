@@ -25,8 +25,8 @@ class DatabricksJobManager:
             "tasks": [
                 {
                     "task_key": job_name.replace(" ", "_").lower(),
-                    "spark_python_task": {
-                         "python_file": notebook_path,
+                    "notebook_task": {
+                         "notebook_path": notebook_path,
                          "base_parameters": self.params
                     },
                     "environment_key": "db_job_key"
@@ -36,15 +36,14 @@ class DatabricksJobManager:
             {   
                 "environment_key":"db_job_key",
                 "spec": {
-                    "client": "2",  
-                    "dependencies": [
-                        "/Workspace/my_project/dist.whl",
-                        "-r /Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/requirements.txt"
-                        ]
+                    "client": "2"
                     }
             }
             ]
         }
+                    # "dependencies": [
+                    #     "-r /Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/requirements.txt"
+                    #     ]
 
         if schedule:
             job_config["schedule"] = {
