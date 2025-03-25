@@ -36,7 +36,7 @@ class DatabricksJobManager:
             {   
                 "environment_key":"db_job_key",
                 "spec": {
-                    "client": "2"
+                    "client": "1"
                     }
             }
             ]
