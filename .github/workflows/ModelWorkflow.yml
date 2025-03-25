@@ -78,6 +78,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install pyspark
           pip install -r requirements.txt
 
       - name: Run CLI Tool using Databricks credentials
@@ -120,6 +121,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install pyspark
           pip install -r requirements.txt
 
       - name: Run CLI Tool using Databricks credentials

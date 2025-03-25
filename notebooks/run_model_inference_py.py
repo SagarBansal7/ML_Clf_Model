@@ -23,6 +23,20 @@ from pyspark.sql.session import SparkSession
 DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
 DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
 
+#Extracting dynamic code configurations
+try:
+    if (len(sys.argv) > 1) &('-f' not in sys.argv[1]):
+        catalog = sys.argv[1] if (len(sys.argv) > 1) &('-f' not in sys.argv[1]) else "workspace"
+        schema = sys.argv[2] if (len(sys.argv) > 1) &('-f' not in sys.argv[2]) else "wine_quality_data"
+except:
+    catalog = "workspace"
+    schema = "wine_quality_data"
+
+#For UI Run:
+# catalog = "workspace"
+# schema = "wine_quality_data"
+print(catalog, schema)
+
 #Create a SparkSession and set it as the default context
 spark = SparkSession.builder.config("spark.databricks.service.client.enabled", "true").config("spark.databricks.service.token", DATABRICKS_TOKEN).config("spark.databricks.unityCatalog.enabled", "true").getOrCreate()
 
@@ -50,6 +64,8 @@ class ModelLoader:
 
     def load_model(self):
         """Loads the model from MLflow registry."""
+        schema_query = f"USE SCHEMA {schema};"
+        sql(schema_query)
         model_uri = f"models:/{self.model_name}/{self.model_version}" if self.model_version else f"models:/{self.model_name}@production"
         self.model = mlflow.pyfunc.load_model(model_uri)
         print(f"Model '{self.model_name}' loaded successfully.")
@@ -104,7 +120,7 @@ class WineQualityPredictor:
 # Main Execution
 if __name__ == "__main__":
     # Define the model name (ensure this matches the registered model in MLflow)
-    MODEL_NAME = "wine_quality"
+    MODEL_NAME = "wine_quality_model"
 
     # Load model
     model_loader = ModelLoader(MODEL_NAME)
