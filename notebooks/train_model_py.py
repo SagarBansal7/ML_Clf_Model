@@ -24,8 +24,13 @@ DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
 DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
 
 #Extracting dynamic code configurations
-catalog = sys.argv[1] if len(sys.argv) > 1 else "workspace"
-schema = sys.argv[2] if len(sys.argv) > 1 else "wine_quality_data"
+try:
+    if (len(sys.argv) > 1) &('-f' not in sys.argv[1]):
+        catalog = sys.argv[1] if (len(sys.argv) > 1) &('-f' not in sys.argv[1]) else "workspace"
+        schema = sys.argv[2] if (len(sys.argv) > 1) &('-f' not in sys.argv[2]) else "wine_quality_data"
+except:
+    catalog = "workspace"
+    schema = "wine_quality_data"
 
 #For UI Run:
 # catalog = "workspace"
