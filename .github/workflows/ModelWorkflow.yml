@@ -12,10 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       MLFLOW_TRACKING_URI: "databricks"
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }} #Workspace level host
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-      CATALOG: "workspace"
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+      CATALOG: "workspace_dev"
       SCHEMA: "wine_quality_data"
+      TRAIN_FILE_PATH: "/Workspace_dev/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
+      INFERENCE_FILE_PATH: "/Workspace_dev/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3

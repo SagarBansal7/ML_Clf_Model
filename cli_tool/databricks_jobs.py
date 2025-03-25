@@ -5,16 +5,13 @@ import os
 class DatabricksJobManager:
     """Class to create and manage Databricks jobs."""
 
-    def __init__(self, databricks_host, databricks_token, catalog, schema):
+    def __init__(self, databricks_host, databricks_token, catalog, schema, train_file_path, inference_file_path):
         self.databricks_host = databricks_host
         self.databricks_token = databricks_token
         self.catalog = catalog
         self.schema = schema
-        self.params = { 
-            "catalog": catalog,
-            "schema": schema
-
-        }
+        self.train_file_path = train_file_path
+        self.inference_file_path = inference_file_path
         self.headers = {
             "Authorization": f"Bearer {self.databricks_token}",
             "Content-Type": "application/json"
@@ -66,7 +63,7 @@ class DatabricksJobManager:
         """Creates the training job (Runs every 30 days)."""
         self.create_job(
             job_name="wine_quality_model_training_job",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py",
+            notebook_path=self.train_file_path,
             schedule="0 0 0 1 * ? *"  # Runs every 30 days
         )
 
@@ -74,6 +71,6 @@ class DatabricksJobManager:
         """Creates the inference job (Runs daily)."""
         self.create_job(
             job_name="wine_quality_model_inference_job",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_model_inference_py.py",
+            notebook_path=self.inference_file_path,
             schedule="0 0 0 * * ? *"  # Runs daily
         )
