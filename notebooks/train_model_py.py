@@ -17,25 +17,29 @@ import cloudpickle
 import time
 from pyspark.sql.session import SparkSession
 import os
-
-# Load Databricks credentials from environment variables
-#os.environ["DATABRICKS_HOST"] = "https://dbc-d953ac30-db10.cloud.databricks.com/"
-#os.environ["DATABRICKS_TOKEN"] = ""
+import sys
 
 # Load Databricks credentials from environment variables
 DATABRICKS_HOST = os.getenv("DATABRICKS_HOST")
 DATABRICKS_TOKEN = os.getenv("DATABRICKS_TOKEN")
 
+#Extracting dynamic code configurations
+catalog = sys.argv[1] if len(sys.argv) > 1 else "workspace"
+schema = sys.argv[2] if len(sys.argv) > 1 else "wine_quality_data"
+
+#For UI Run:
+# catalog = "workspace"
+# schema = "wine_quality_data"
+print(catalog, schema)
+
 #Create a SparkSession and set it as the default context
 spark = SparkSession.builder.config("spark.databricks.service.client.enabled", "true").config("spark.databricks.service.token", DATABRICKS_TOKEN).config("spark.databricks.unityCatalog.enabled", "true").getOrCreate()
-
-#Spark version check
-print(spark.version)
 
 #mlflow uri setup
 mlflow.set_registry_uri("databricks-uc")
 mlflow.set_tracking_uri("databricks")
-#mlflow.set_experiment("/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py") 
+#mlflow.set_experiment(experiment_id = "869fe2efae694fcba0e661edc32a1727")
+#mlflow.set_experiment(experiment_id = "869fe2efae694fcba0e661edc32a1727")
 
 # 1. Data Processing Class
 class WineDataProcessor:
@@ -57,15 +61,16 @@ class WineDataProcessor:
         #Debug the issue - print all catalogs and schemas
         df_schema = spark.sql("SHOW CURRENT SCHEMA").toPandas()
         df_catalog = spark.sql("SHOW CATALOGS").toPandas()
-
         print("Current Schema:", df_schema['catalog'][0], df_schema['namespace'][0], "Catalogs:", list(df_catalog['catalog'])  )
         
         #Catalog - throws error here
-        spark.sql("USE CATALOG workspace;")
-        spark.sql("USE schema wine_quality_data;")
-        
-        white_wine = spark.read.format("delta").table("workspace.wine_quality_data.white_wine_training_data").toPandas()
-        red_wine = spark.read.format("delta").table("workspace.wine_quality_data.red_wine_training_data").toPandas()
+        catalog_query = f"USE CATALOG {catalog};"
+        schema_query = f"USE SCHEMA {schema};"
+        spark.sql(catalog_query)
+        spark.sql(schema_query)
+
+        white_wine = spark.read.format("delta").table(f"{catalog}.{schema}.white_wine_training_data").toPandas()
+        red_wine = spark.read.format("delta").table(f"{catalog}.{schema}.red_wine_training_data").toPandas()
 
         red_wine['is_red'] = 1
         white_wine['is_red'] = 0
@@ -124,11 +129,11 @@ class WineQualityModel:
             additional_conda_channels=None,
         )
 
-        mlflow.pyfunc.log_model("random_forest_model", python_model=wrappedModel, conda_env=conda_env, signature=signature)
+        mlflow.pyfunc.log_model("wine_quality_model", python_model=wrappedModel, conda_env=conda_env, signature=signature)
 
 # 4. MLflow Experiment Class
 class MLflowExperiment:
-    def __init__(self, model_name="wine_quality"):
+    def __init__(self, model_name="wine_quality_model"):
         self.model_name = model_name
 
     def run_experiment(self, model, X_train, X_test, y_train, y_test):
@@ -137,7 +142,7 @@ class MLflowExperiment:
         mlflow.set_tracking_uri("databricks")
         print("Tracking UI:", mlflow.get_tracking_uri())
         
-        with mlflow.start_run(run_name='untuned_random_forest'):
+        with mlflow.start_run(run_name='wine_model_training_run'):
             model.train(X_train, y_train)
             auc_score = model.evaluate(X_test, y_test)
 
@@ -145,11 +150,11 @@ class MLflowExperiment:
             mlflow.log_metric('auc', auc_score)
             model.log_model(X_train)
 
-            return mlflow.search_runs(filter_string='tags.mlflow.runName = "untuned_random_forest"').iloc[0].run_id
+            return mlflow.search_runs(filter_string='tags.mlflow.runName = "wine_model_training_run"').iloc[0].run_id
 
     def register_model(self, run_id):
         """Registers the trained model in MLflow."""
-        model_version = mlflow.register_model(f"runs:/{run_id}/random_forest_model", self.model_name)
+        model_version = mlflow.register_model(f"runs:/{run_id}/wine_quality_model", self.model_name)
         client = mlflow.MlflowClient()
         client.set_registered_model_alias(self.model_name, "production", version=model_version.version)
         time.sleep(15)  # Wait for registration to complete

@@ -22,19 +22,6 @@ class DatabricksJobManager:
 
     def create_job(self, job_name, notebook_path, schedule=None):
         """Creates a Databricks job."""
-        # job_config = {
-        #     "name": job_name,
-        #     "tasks": [
-        #         {
-        #             "task_key": job_name.replace(" ", "_").lower(),
-        #             "notebook_task": {
-        #                  "notebook_path": notebook_path,
-        #                  "base_parameters": self.params
-        #             }
-        #         }
-        #     ]
-        # }
-
         job_config = {
             "name": job_name,
             "tasks": [
