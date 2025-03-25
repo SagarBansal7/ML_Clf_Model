@@ -16,8 +16,8 @@ jobs:
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
       CATALOG: "workspace_dev"
       SCHEMA: "wine_quality_data"
-      TRAIN_FILE_PATH: "/Workspace_dev/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
-      INFERENCE_FILE_PATH: "/Workspace_dev/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
+      TRAIN_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
+      INFERENCE_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_inference_py.py"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -56,6 +56,10 @@ jobs:
       MLFLOW_TRACKING_URI: "databricks"
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_STAGE }} #Workspace level host. 
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_STAGE }}
+      CATALOG: "workspace_stage"
+      SCHEMA: "wine_quality_data"
+      TRAIN_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
+      INFERENCE_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_inference_py.py"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -92,6 +96,10 @@ jobs:
       MLFLOW_TRACKING_URI: "databricks"
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }} #Workspace level host
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
+      CATALOG: "workspace_prod"
+      SCHEMA: "wine_quality_data"
+      TRAIN_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
+      INFERENCE_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_inference_py.py"
     if: github.ref == 'refs/heads/main' # This will only run on main branch
 
     steps:
