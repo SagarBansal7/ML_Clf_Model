@@ -5,9 +5,13 @@ import os
 class DatabricksJobManager:
     """Class to create and manage Databricks jobs."""
 
-    def __init__(self, databricks_host, databricks_token):
+    def __init__(self, databricks_host, databricks_token, catalog, schema, train_file_path, inference_file_path):
         self.databricks_host = databricks_host
         self.databricks_token = databricks_token
+        self.catalog = catalog
+        self.schema = schema
+        self.train_file_path = train_file_path
+        self.inference_file_path = inference_file_path
         self.headers = {
             "Authorization": f"Bearer {self.databricks_token}",
             "Content-Type": "application/json"
@@ -20,12 +24,23 @@ class DatabricksJobManager:
             "tasks": [
                 {
                     "task_key": job_name.replace(" ", "_").lower(),
-                    "notebook_task": {
-                         "notebook_path": notebook_path
-                    }
+                    "spark_python_task": {
+                         "python_file": notebook_path,
+                         "parameters": [self.catalog, self.schema]
+                    },
+                    "environment_key": "db_job_key"
                 }
+            ],
+        "environments":[
+            {   
+                "environment_key":"db_job_key",
+                "spec": {
+                    "client": "2"
+                    }
+            }
             ]
         }
+
 
         if schedule:
             job_config["schedule"] = {
@@ -34,28 +49,28 @@ class DatabricksJobManager:
             }
 
         response = requests.post(
-            f"{self.databricks_host}/api/2.1/jobs/create",
+            f"{self.databricks_host}api/2.1/jobs/create",
             headers=self.headers,
             json=job_config
         )
 
         if response.status_code == 200:
-            print(f"Job '{job_name}' created successfully!")
+            print(f"Job '{job_name}' created successfully!, {response}")
         else:
             print(f"Failed to create job '{job_name}': {response.text}")
 
     def create_training_job(self):
         """Creates the training job (Runs every 30 days)."""
         self.create_job(
-            job_name="Train Classification Model",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py",
+            job_name="wine_quality_model_training_job",
+            notebook_path=self.train_file_path,
             schedule="0 0 0 1 * ? *"  # Runs every 30 days
         )
 
     def create_inference_job(self):
         """Creates the inference job (Runs daily)."""
         self.create_job(
-            job_name="Run Inference",
-            notebook_path="/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_model_inference_py.py",
+            job_name="wine_quality_model_inference_job",
+            notebook_path=self.inference_file_path,
             schedule="0 0 0 * * ? *"  # Runs daily
         )

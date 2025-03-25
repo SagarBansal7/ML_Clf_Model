@@ -31,17 +31,17 @@ ML_Clf_Model/
 
 The repository uses **GitHub Actions** for automation. The workflow is defined in `.github/ModelWorkflow.yml` and consists of the following jobs:
 
-### 1. **Build**
-- Runs on every push to `dev` or `main` branches.
-- Sets up Python and installs dependencies.
+### 1. **Dev**
+- Runs on every push to `dev` branch.
+- Sets up Python, installs dependencies, runs tests and executes the CLI tool to deploy jobs to Databricks (development environment).
 
-### 2. **Deploy-Dev**
-- Runs only on the `dev` branch.
-- Runs tests and executes the CLI tool to deploy jobs to Databricks (development environment).
+### 2. **Stage**
+- Runs on every push to `stage` branch.
+- Sets up Python, installs dependencies, runs tests and executes the CLI tool to deploy jobs to Databricks (stage environment).
 
-### 3. **Deploy-Main**
-- Runs only on the `main` branch.
-- Runs tests and executes the CLI tool to deploy jobs to Databricks (production environment).
+### 3. **Main**
+- Runs on every push to `main` branch.
+- Sets up Python, installs dependencies, runs tests and executes the CLI tool to deploy jobs to Databricks (production environment).
 
 ---
 
@@ -149,15 +149,13 @@ python cli_tool/cli.py deploy
 ---
 
 ## Limitations
-- This project used free tier Databricks edition that has compartively more development challenges than Enterprise edition.
-- Due to the serverless compute and time constraints, the GitHub Action workflow has issues running the cli tool.
+- This project utilized the free-tier Databricks edition, which presents comparatively more development challenges than the Enterprise edition.
+- Two issues were discovered related to the free-tier Databricks edition. The details are as follows:
+  - https://github.com/SagarBansal7/Wine_Quality_Prediction_Model/issues/4
+  - https://github.com/SagarBansal7/Wine_Quality_Prediction_Model/issues/5
+- Extensive research was conducted using the official documentation, and a series of resolutions were attempted to address the issues. However, since the documentation is tailored and tested for premium account setups, none of the solutions worked with the free-tier subscription. (The attempted resolutions are documented in the above links.)
+- On a positive note, the issues themselves are not complex and should be resolved within a few minutes with a premium subscription account and/or custom compute configurations.
 
 ## Future Enhancements
-- With additional time, other free tier options can be explored that allows compute configuration and CLI usage.
-- We can also explore the config and access enablement when running through Github Actions vs UI. 
-- Current setup has dev and main(prod) branches. Stage can be added as an additional branch/env.
-- In addition to MLFlow, more comprehensive post-deployment monitoring tool and data quality check tool can be added.
-- Automation can be added to update the prod databricks files when a push to main(prod) branch has been made in git.
-
-
-
+- With additional time, setting up custom compute configuration and CLI usage can be explored.
+- In addition to MLFlow, more comprehensive post-deployment monitoring tool and data quality check tools can be added.
