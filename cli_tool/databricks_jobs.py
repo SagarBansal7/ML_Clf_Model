@@ -20,40 +20,40 @@ class DatabricksJobManager:
 
     def create_job(self, job_name, notebook_path, schedule=None):
         """Creates a Databricks job."""
-        job_config = {
-            "name": job_name,
-            "tasks": [
-                {
-                    "task_key": job_name.replace(" ", "_").lower(),
-                    "notebook_task": {
-                         "notebook_path": notebook_path,
-                         "base_parameters": self.params
-                    }
-                }
-            ]
-        }
-
         # job_config = {
         #     "name": job_name,
         #     "tasks": [
         #         {
         #             "task_key": job_name.replace(" ", "_").lower(),
-        #             "spark_python_task": {
-        #                  "python_file": notebook_path,
-        #                  "base_parameters": {}
-        #             },
-        #             "environment_key": "db_job_key"
-        #         }
-        #     ],
-        # "environments":[
-        #     {   
-        #         "environment_key":"db_job_key",
-        #         "spec": {
-        #             "client": "1"
+        #             "notebook_task": {
+        #                  "notebook_path": notebook_path,
+        #                  "base_parameters": self.params
         #             }
-        #     }
+        #         }
         #     ]
         # }
+
+        job_config = {
+            "name": job_name,
+            "tasks": [
+                {
+                    "task_key": job_name.replace(" ", "_").lower(),
+                    "spark_python_task": {
+                         "python_file": notebook_path,
+                         "base_parameters": self.params
+                    },
+                    "environment_key": "db_job_key"
+                }
+            ],
+        "environments":[
+            {   
+                "environment_key":"db_job_key",
+                "spec": {
+                    "client": "2"
+                    }
+            }
+            ]
+        }
 
 
         if schedule:
@@ -69,8 +69,6 @@ class DatabricksJobManager:
         )
 
         if response.status_code == 200:
-            print("Host:", f"{self.databricks_host}api/2.1/jobs/create")
-            print("Config:", f"{job_config}")
             print(f"Job '{job_name}' created successfully!, {response}")
         else:
             print(f"Failed to create job '{job_name}': {response.text}")
