@@ -25,22 +25,36 @@ class DatabricksJobManager:
             "tasks": [
                 {
                     "task_key": job_name.replace(" ", "_").lower(),
-                    "spark_python_task": {
-                         "python_file": notebook_path,
-                         "base_parameters": {}
-                    },
-                    "environment_key": "db_job_key"
-                }
-            ],
-        "environments":[
-            {   
-                "environment_key":"db_job_key",
-                "spec": {
-                    "client": "1"
+                    "notebook_task": {
+                         "notebook_path": notebook_path,
+                         "base_parameters": self.params
                     }
-            }
+                }
             ]
         }
+
+        # job_config = {
+        #     "name": job_name,
+        #     "tasks": [
+        #         {
+        #             "task_key": job_name.replace(" ", "_").lower(),
+        #             "spark_python_task": {
+        #                  "python_file": notebook_path,
+        #                  "base_parameters": {}
+        #             },
+        #             "environment_key": "db_job_key"
+        #         }
+        #     ],
+        # "environments":[
+        #     {   
+        #         "environment_key":"db_job_key",
+        #         "spec": {
+        #             "client": "1"
+        #             }
+        #     }
+        #     ]
+        # }
+
 
         if schedule:
             job_config["schedule"] = {
