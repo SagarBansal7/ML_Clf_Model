@@ -12,8 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       MLFLOW_TRACKING_URI: "databricks"
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host. 
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }} #Workspace level host
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+      CATALOG: "workspace_dev"
+      SCHEMA: "wine_quality_data"
+      TRAIN_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
+      INFERENCE_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_inference_py.py"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -32,6 +36,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install pyspark
           pip install -r requirements.txt
 
       - name: Run CLI Tool using Databricks credentials
@@ -43,7 +48,7 @@ jobs:
         run: |
           export PYTHONPATH=notebooks  # Set PYTHONPATH to the src directory
           pytest tests  # Run tests located in the tests directory
-  
+ #          pip install --upgrade pip setuptools wheel 
   stage:
     if: github.ref == 'refs/heads/stage'
     runs-on: ubuntu-latest
@@ -51,6 +56,10 @@ jobs:
       MLFLOW_TRACKING_URI: "databricks"
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_STAGE }} #Workspace level host. 
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_STAGE }}
+      CATALOG: "workspace_stage"
+      SCHEMA: "wine_quality_data"
+      TRAIN_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
+      INFERENCE_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_inference_py.py"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -85,8 +94,12 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       MLFLOW_TRACKING_URI: "databricks"
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }} #Workspace level host. 
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }} #Workspace level host
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
+      CATALOG: "workspace_prod"
+      SCHEMA: "wine_quality_data"
+      TRAIN_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/train_model_py.py"
+      INFERENCE_FILE_PATH: "/Workspace/Users/sagarbansal719@gmail.com/Wine_Quality_Prediction_Model/notebooks/run_inference_py.py"
     if: github.ref == 'refs/heads/main' # This will only run on main branch
 
     steps:
