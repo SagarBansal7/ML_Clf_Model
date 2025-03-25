@@ -159,6 +159,3 @@ python cli_tool/cli.py deploy
 ## Future Enhancements
 - With additional time, setting up custom compute configuration and CLI usage can be explored.
 - In addition to MLFlow, more comprehensive post-deployment monitoring tool and data quality check tools can be added.
-
-
-
